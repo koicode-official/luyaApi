@@ -7,7 +7,7 @@ var cors = require("cors");
 var indexRouter = require('./routes/index');
 var app = express();
 
-const allowedOrigins = [ "http://localhost:3000", ]
+const allowedOrigins = [ "http://localhost:3000", "http://ec2-15-165-149-80.ap-northeast-2.compute.amazonaws.com"]
 
 
 // view engine setup
