@@ -114,7 +114,16 @@ router.post("/add", async (req, res) => {
 */
 
 router.post("/update", async (req, res) => {
+  const prayNo = req.body.prayNo;
+  const prayText = req.body.text;
   try {
+    const { status } = await crud.updateData("PRAY_LIST_TB", { "PRAY_TEXT": prayText }, { "PRAY_NO": prayNo })
+    if (status === -1) {
+      console.error('Error Occured at "/pray/update" - ', error);
+      res.status(500).json({ message: 'error', error: "Fail to update text information from PRAY_LIST_TB at /pray/update" });
+    }
+    res.status(200).json({ message: 'success' });
+
   } catch (error) {
     console.error('Error Occured at "/pray/update" - ', error);
     res.status(500).json({ message: 'error' });
