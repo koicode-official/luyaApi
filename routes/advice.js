@@ -1,60 +1,28 @@
 
 const express = require('express');
+const crud = require("../public/javascripts/crud.js")
 var router = express.Router();
-const axios = require("axios")
+
 
 require("dotenv").config();
 
 
-
-// YouTube 자막 ID 가져오기
-async function getYouTubeCaptionId(videoId) {
-  try {
-    const response = await axios.get(
-      `https://www.googleapis.com/youtube/v3/captions?part=id&videoId=${videoId}&key=${process.env.YOUTUBE_APIKEY}`
-    );
-
-    return response.data.items[0].id;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-// YouTube 자막 가져오기
-async function getYouTubeCaptionDetails(captionId) {
-  try {
-    const response = await axios.get(
-      `https://www.googleapis.com/youtube/v3/captions/${captionId}?key=${process.env.YOUTUBE_APIKEY}`
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-
-
-
 // 루트 엔드포인트
-router.get('/script', async (req, res) => {
+router.post('/save', async (req, res) => {
+  const adviceInfo = req.body;
   try {
-    // const videoId = req.query.videoId; // GET 요청의 쿼리 매개변수에서 비디오 ID 추출
+    console.log('adviceInfo', adviceInfo)
 
-    // if (!videoId) {
-    //   return res.status(400).json({ error: '비디오 ID가 제공되지 않았습니다.' });
-    // }
+    const { status } = await crud.createDataRow("AI_ADVICE_TB", { "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\\"') , "QUESTION": adviceInfo.question ,  "USER_NO": 0})
+    if (status === -1) {
+      console.error('Error Occured at "/advice/save" - ', error);
+      res.status(500).json({ message: 'error', error: "Fail to add information from PRAY_LIST_TB at /advice/save" });
+    }
+    res.status(200).json({ message: 'success' });
 
-    videoId = "_2MJIdbgECM"
-    const captionId = await getYouTubeCaptionId(videoId);
-    console.log('captionId', captionId)
-    const captionDetails = await getYouTubeCaptionDetails(captionId);
-
-    res.json({ captionDetails });
   } catch (error) {
-    res.status(500).json({ error: '서버 오류가 발생했습니다.' });
+    console.error('Error Occured at "/advice/save" - ', error);
+    res.status(500).json({ message: 'error' });
   }
 });
 
