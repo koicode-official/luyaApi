@@ -1,6 +1,6 @@
 const express = require('express');
 const common = require('../public/javascripts/common');
-const crud = require("../public/javascripts/crud")
+const crud = require("../model/crud")
 var router = express.Router();
 
 require("dotenv").config();

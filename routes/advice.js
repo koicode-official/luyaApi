@@ -1,6 +1,6 @@
 
 const express = require('express');
-const crud = require("../public/javascripts/crud.js")
+const crud = require("../model/crud.js")
 var router = express.Router();
 
 

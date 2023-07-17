@@ -1,5 +1,12 @@
 
 
+var jwToken = require("./jwt.js");
+const crypto = require('crypto')
+require("dotenv").config();
+
+const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
+const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
+
 
 const common = {
   findObjectById: (obj, id) => {

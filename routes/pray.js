@@ -1,6 +1,7 @@
 const express = require('express');
 const common = require("../public/javascripts/common.js")
-const crud = require("../public/javascripts/crud.js")
+const crud = require("../model/crud.js");
+const { getUserNo } = require('../model/user.js');
 var router = express.Router();
 require("dotenv").config();
 
@@ -34,8 +35,9 @@ router.get("/info", async (req, res) => {
 */
 
 router.get("/list", async (req, res) => {
-  const userNo = parseInt(req.query.userNo);
+  const userNo = await getUserNo(req, res);
   const completed = req.query.completed;
+  console.log('userNo', userNo)
   let whereParse = { "USER_NO": userNo, "DELETED_AT": null };
 
   if (completed !== null) {
@@ -90,8 +92,9 @@ router.post("/done", async (req, res) => {
 
 router.post("/add", async (req, res) => {
   const text = req.body.text;
+  const userNo = await getUserNo(req, res);
   const prayObj = {
-    USER_NO: 0,
+    USER_NO: userNo,
     PRAY_TEXT: text,
   }
   try {
