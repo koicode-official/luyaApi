@@ -15,7 +15,6 @@ router.post("/", async (req, res) => {
 
   const loginInfo = common.reqToDatabaseFormat(req.body);
   const { rows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: loginInfo.USER_EMAIL, WITHDRAWAL_DT: null })
-  console.log('rows', rows)
   if (!rows || rows.length === 0) {
     res.status(200).send({ status: "not found", error: "User information is not found" });
   } else {
@@ -24,20 +23,18 @@ router.post("/", async (req, res) => {
       if (err) {
         res.status(500).send({ status: "fail", error: "Failed to salting password" });
       } else {
-
-        common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
-        res.status(200).send({
-          status: "success",
-        });
-
-        // if (key.toString('base64') === rows[0].USER_PASSWOARD) {
-        //   common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
-        //   res.status(200).send({
-        //     status: "success",
-        //   });
-        // } else {
-        //   res.status(200).send({ status: "fail", error: "Wrong password" });
-        // }
+        // common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
+        // res.status(200).send({
+        //   status: "success",
+        // });
+        if (key.toString('base64') === rows[0].USER_PASSWORD) {
+          common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
+          res.status(200).send({
+            status: "success",
+          });
+        } else {
+          res.status(200).send({ status: "fail", error: "Wrong password" });
+        }
 
 
       }
@@ -70,7 +67,6 @@ router.get("/logout", async (req, res) => {
 
 router.post("/kakaologinvalidation", async (req, res) => {
   const code = req.body.code
-  console.log('authcode :>> ', code);
   await axios({
     url: "https://kauth.kakao.com/oauth/token",
     method: "POST",
@@ -152,7 +148,6 @@ router.post("/kakaologin", async (req, res) => {
 
   } else {
     common.setJwtTokens(req, res, userEmail, userPhone);
-    console.log('kakaologin')
     res.status(200).send({
       status: "success",
     });

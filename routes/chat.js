@@ -30,7 +30,6 @@ router.post('/completions', async (req, res) => {
       stream: true
     });
 
-    console.log(response);
 
     res.json({ message: 'success', advice: response.data.choices[0].message });
 
@@ -56,7 +55,6 @@ router.get("/todaywords", async (req, res) => {
         { role: 'user', content: "오늘의 성경말씀 한문장과 그 문장을 풀어서 해설한 2문단의 글을 작성해서 [ sentence: 성경말씀 , descriptions : [문단1 , 문단2] ]으로  json 형태로 보여주세요." }
       ],
     });
-    console.log(completion.data.choices[0].message);
 
     res.json({ message: 'success', data: completion.data.choices[0].message });
 

@@ -5,6 +5,8 @@ var prayRouter = require("./pray.js");
 var todayRouter = require('./today.js')
 var adviceRotuer = require("./advice.js");
 var loginRouter = require("./login.js");
+var authPhoneRouter = require("./authPhone.js");
+var userRouter = require("./user.js");
 var auth = require("../middleware/auth.js")
 
 /* GET home page. */
@@ -17,10 +19,12 @@ router.use("/chat", chatRouter);
 router.use("/today", todayRouter);
 router.use("/advice", adviceRotuer);
 router.use("/login", loginRouter);
+router.use("/authPhone", authPhoneRouter);
+router.use("/user", userRouter);
 
 
 //auth
-router.use("/pray",auth ,prayRouter);
+router.use("/pray", auth, prayRouter);
 
 
 

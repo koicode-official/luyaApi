@@ -11,8 +11,6 @@ require("dotenv").config();
 router.post('/save', async (req, res) => {
   const adviceInfo = req.body;
   try {
-    console.log('adviceInfo', adviceInfo)
-
     const { status } = await crud.createDataRow("AI_ADVICE_TB", { "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\\"') , "QUESTION": adviceInfo.question ,  "USER_NO": 0})
     if (status === -1) {
       console.error('Error Occured at "/advice/save" - ', error);

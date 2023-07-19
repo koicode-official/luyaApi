@@ -10,7 +10,6 @@ var common = require("../public/javascripts/common.js")
 const whereParsing = (obj) => {
     let parse = "WHERE 1=1 ";
     for (const [key, value] of Object.entries(obj)) {
-        console.log('key,value', key, value, typeof value)
         if (key === "NotWhere") {
             for (const [notKey, notValue] of Object.entries(value)) {
                 if (notValue instanceof Date) {
@@ -19,7 +18,6 @@ const whereParsing = (obj) => {
                 } else if (typeof notValue === "number") {
                     parse += ` AND ${notKey} != ${notValue}`
                 } else if (notValue === null) {
-                    console.log("it its null")
                     parse += ` AND ${notKey} IS NOT NULL`
                 } else {
                     parse += ` AND ${notKey} != "${notValue}" `
@@ -32,7 +30,6 @@ const whereParsing = (obj) => {
             } else if (typeof value === "number") {
                 parse += ` AND ${key} = ${value}`
             } else if (value === null) {
-                console.log("it its null")
                 parse += ` AND ${key} IS NULL`
             } else {
                 parse += ` AND ${key} = "${value}" `
@@ -113,7 +110,7 @@ const crud = {
                 ${groupby ? 'GROUP BY ' + groupby : ''}
             `
             ;
-        console.log('get query222', query)
+        console.log( query)
         try {
             const [rows] = await db.query(query);
             return { status: 1, rows: rows }
@@ -132,7 +129,7 @@ const crud = {
     createDataRow: async (tableName, obj) => {
         const insertData = InsertParsing(obj);
         const query = `INSERT INTO ${tableName}(${insertData.fieldList}) VALUES ("${insertData.valueList}")`;
-        console.log('insertquery query', query)
+        console.log('insert query', query)
         try {
             const [rows] = await db.query(query, insertData.valueList);
             return { status: 1, rows: rows }
@@ -183,7 +180,6 @@ const crud = {
         try {
             console.log('update query :>> ', query);
             const [rows] = await db.query(query);
-            console.log('rows', rows)
             return { status: 1, rows: rows }
         } catch (error) {
             console.error(`Error Occured from updateData() function : \r`, error.sqlMessage)

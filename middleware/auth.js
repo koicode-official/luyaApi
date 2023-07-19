@@ -6,10 +6,8 @@ const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 
 const authorizationJwt = (req, res, next) => {
-  console.log('req.cookies', req.cookies);
   const accessToken = req.cookies._actk ? req.cookies._actk : req.accessToken;
   const refreshToken = req.cookies._rftk;
-  console.log('accessToken,refreshToken', accessToken, refreshToken)
   let accessTokenVerification = null;
   let refreshTokenVerification = jwToken.verify(refreshToken, JWT_KEY);
   let loginInfo = {};
@@ -35,7 +33,6 @@ const authorizationJwt = (req, res, next) => {
     ) {//accessToken 만료 재발급
       if (refreshTokenVerification.ok === false) {
         console.log(" access token 및 refresh token이 둘다 만료 ");
-        console.log('refreshTokenVerification', refreshTokenVerification)
         res.clearCookie('_actk');
         res.clearCookie('_rftk');
         res.status(200).send({
@@ -56,7 +53,6 @@ const authorizationJwt = (req, res, next) => {
           httpOnly: true,
           expires: accessTokenExpires,
         });
-        console.log('newAccessToken :>> ', newAccessToken);
         req.accessToken = newAccessToken;
         next();
       }

@@ -36,11 +36,10 @@ router.get("/info", async (req, res) => {
 
 router.get("/list", async (req, res) => {
   const userNo = await getUserNo(req, res);
-  const completed = req.query.completed;
-  console.log('userNo', userNo)
+  const completed = req.query.done === "true" ? 1 : 0;
   let whereParse = { "USER_NO": userNo, "DELETED_AT": null };
 
-  if (completed !== null) {
+  if (req.query.done != null) {
     whereParse = {
       ...whereParse,
       "PRAY_COMPLETED": completed

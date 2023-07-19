@@ -16,15 +16,10 @@ const user = {
     return userRows[0].USER_NO;
   },
   checkPassword: async (password, salt) => {
-    console.log('password,salt :>> ', password, salt);
     crypto.pbkdf2(password, salt, 9999, 64, 'sha512', (err, key) => {
-      console.log('err,key', err, key)
       if (err) {
-        console.log('valid', err)
-
         return { status: -1, message: err }
       } else {
-        console.log('valid', valid)
         return { status: 1, message: "valid" }
       }
     });
