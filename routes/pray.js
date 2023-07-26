@@ -140,7 +140,6 @@ router.post("/delete", async (req, res) => {
   const prayNo = parseInt(req.body.prayNo);
 
   try {
-    console.log('prayNo', prayNo)
     const { status } = await crud.updateData("PRAY_LIST_TB", { "UPDATED_AT": common.jsDateToMysqlDateTime(new Date()), "DELETED_AT": common.jsDateToMysqlDateTime(new Date()) }, { "PRAY_NO": prayNo })
     if (status === -1) {
       console.error('Error Occured at "/pray/delete" - ', error);
