@@ -7,7 +7,8 @@ var cors = require("cors");
 var indexRouter = require('./routes/index');
 var app = express();
 
-const allowedOrigins = [ "http://localhost:3000"  , "https://luya.co.kr" , "https://www.luya.co.kr/"]
+var allowedOrigins = ["http://localhost:3000", "https://luya.co.kr", "https://www.luya.co.kr"];
+
 
 
 // view engine setup
