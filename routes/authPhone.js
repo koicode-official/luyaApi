@@ -35,9 +35,9 @@ async function send_auth_code(phone, res) {
   var user_phone_number = phone; //수신 전화번호 기입
   cache.put(phone, authNumber, 60000);
   const date = Date.now().toString();
-  const uri = process.env.TEST_NAVER_SENSE_SERVICE_ID; //서비스 ID
-  const secretKey = process.env.TEST_NAVER_SENSE_SECRET_KEY; // Secret Key
-  const accessKey = process.env.TEST_NAVER_SENSE_ACCESS_KEY; //Access Key
+  const uri = process.env.NAVER_SENSE_SERVICE_ID; //서비스 ID
+  const secretKey = process.env.NAVER_SENSE_SECRET_KEY; // Secret Key
+  const accessKey = process.env.NAVER_SENSE_ACCESS_KEY; //Access Key
   const method = "POST";
   const space = " ";
   const newLine = "\n";
