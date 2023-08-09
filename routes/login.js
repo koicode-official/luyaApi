@@ -92,9 +92,10 @@ router.post("/kakaologin", async (req, res) => {
   const userKakaoId = userInfo.id;
   const kakaoAccount = userInfo.kakao_account;
   // const recommendCode = req.body.recommendCode ? req.body.recommendCode : null;
+  console.log('kakaoAccount', kakaoAccount)
   const userEmail = kakaoAccount.email;
-  let userPhone = "0" + kakaoAccount.phone_number.split(" ")[1];
-  userPhone = userPhone.replace(/[^0-9]/g, "");
+  let userPhone = "0" + kakaoAccount.has_phone_number === true ? kakaoAccount.phone_number.split(" ")[1].replace(/[^0-9]/g, "") : null;
+  // userPhone = userPhone.replace(/[^0-9]/g, "");
   const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
   const signupInfo = {
     UserType: `kakao_${userKakaoId}`,

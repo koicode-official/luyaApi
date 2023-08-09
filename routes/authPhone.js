@@ -65,7 +65,7 @@ async function send_auth_code(phone, res) {
     data: {
       type: "SMS",
       countryCode: "82",
-      from: "01082487509",
+      from: "07088339130",
       content: `루야-인증번호는[${authNumber}]입니다.`,
       messages: [{ to: `${user_phone_number}` }],
     },
