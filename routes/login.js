@@ -94,6 +94,7 @@ router.post("/kakaologin", async (req, res) => {
   const kakaoAccount = userInfo.kakao_account;
   const userEmail = kakaoAccount.email;
   const userPhone = kakaoAccount.has_phone_number === true ? "0" + kakaoAccount.phone_number.split(" ")[1].replace(/[^0-9]/g, "") : null;
+  console.log(userPhone);
   const userGender = kakaoAccount.has_gender === true ? kakaoAccount.gender : null
   const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
   // const birthDay = `${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
