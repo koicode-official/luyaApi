@@ -50,8 +50,9 @@ router.get("/list", async (req, res) => {
     if (status === -1) {
       console.error('Error Occured at "/pray/list" - ', error);
       res.status(500).json({ message: 'error', error: "Fail to get list of information from PRAY_LIST_TB at /pray/list" });
+    } else {
+      res.status(200).json({ message: 'success', prayList: rows });
     }
-    res.status(200).json({ message: 'success', prayList: rows });
 
   } catch (error) {
     console.error('Error Occured at "/pray/list" - ', error);
