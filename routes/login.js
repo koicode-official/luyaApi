@@ -87,62 +87,43 @@ router.post("/kakaologinvalidation", async (req, res) => {
 })
 
 
+
 router.post("/kakaologin", async (req, res) => {
   const userInfo = req.body.userInfo;
   const userKakaoId = userInfo.id;
   const kakaoAccount = userInfo.kakao_account;
-  // const recommendCode = req.body.recommendCode ? req.body.recommendCode : null;
-  console.log('kakaoAccount', kakaoAccount)
   const userEmail = kakaoAccount.email;
-  let userPhone = "0" + kakaoAccount.has_phone_number === true ? kakaoAccount.phone_number.split(" ")[1].replace(/[^0-9]/g, "") : null;
-  // userPhone = userPhone.replace(/[^0-9]/g, "");
+  const userPhone = kakaoAccount.has_phone_number === true ? "0" + kakaoAccount.phone_number.split(" ")[1].replace(/[^0-9]/g, "") : null;
+  const userGender = kakaoAccount.has_gender === true ? kakaoAccount.gender : null
   const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
+  // const birthDay = `${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
+  
   const signupInfo = {
-    UserType: `kakao_${userKakaoId}`,
-    UserName: kakaoAccount.name,
-    UserPhone: userPhone,
-    UserEmail: kakaoAccount.email,
-    UserGender: kakaoAccount.gender,
-    birthDay: common.jsDateToMysqlDateTime(birthDay),
-    MarketingAgreement: 1,
-    StatusCode: "normal",
+    USER_TYPE: `kakao_${userKakaoId}`,
+    USER_NAME: kakaoAccount.name,
+    USER_PHONE: userPhone,
+    USER_EMAIL: userEmail,
+    USER_GENDER: userGender,
+    USER_BIRTH_DT: common.jsDateToMysqlDateTime(birthDay),
   }
 
-  const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'UserMst', { userEmail: userEmail, StatusCode: "normal" });
+  console.log('kakaoAccount', kakaoAccount)
+  console.log('signupInfo', signupInfo);
+  const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
   if (userStatus === -1) {
     res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/kakaologin" });
   }
   if (userRows.length === 0) {
 
     const { password, salt } = await common.createHashedPassword(userKakaoId + new Date());
-    signupInfo["UserPassword"] = password
-    signupInfo["SaltKey"] = salt
-    signupInfo["RecommendCode"] = Math.random().toString(36).substring(2, 12)
+    signupInfo["USER_PASSWORD"] = password
+    signupInfo["USER_SALT_KEY"] = salt
 
-
-    const { status, rows: createdUserRows } = await crud.createDataRow('UserMst', signupInfo);
+    const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
 
     if (status !== -1) {
-
-      const milesEventInfo = {
-        UserNo: createdUserRows.insertId,
-        StatusCode: "적립",
-        Amount: 3000,
-        EventType: "회원가입"
-      }
-
-      const { status: MilesEventMst, rows: MilesEventMstRows } = await crud.createDataRow('MilesEventMst', milesEventInfo);
-      if (MilesEventMst === -1) {
-        res.status(500).send({ status: "error", error: "Failed to create MilesEventMst information" });
-      }
-
-      const result = await addMiles(MilesEventMstRows.insertId, 3000, createdUserRows.insertId)
-      if (result.status === -1) {
-        res.status(500).send({ status: "error", error: "Failed to create MilesDetailMst information" });
-      }
-
       common.setJwtTokens(req, res, userEmail, userPhone);
-      res.status(200).send({ status: "not exist" });
+      res.status(200).send({ status: "success", message: "new user" });
     } else {
       res.status(200).send({ status: "error", error: "Failed to create user information" });
     }
@@ -202,5 +183,21 @@ router.post("/simplesignup", auth, async (req, res) => {
 router.get("/check", auth, async (req, res) => {
   res.status(200).send({ status: "success" })
 })
+
+router.get("/checkId", async function (req, res) {
+  const { status, rows } = await crud.getDataListFromTable('USER_EMAIL', 'USER_TB', { USER_EMAIL: req.query.email })
+  if (status !== -1) {
+    if (rows.length === 0) {
+      res.status(200).send({ status: "Not exist" });
+    } else {
+      res.status(200).send({ status: "exist", data: rows });
+    }
+  } else {
+    res.status(500).send({ status: "error", error: "Failed to search user information" });
+  }
+});
+
+
+
 module.exports = router;
 

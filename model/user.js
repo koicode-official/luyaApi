@@ -11,6 +11,7 @@ const user = {
     const { status, rows: userRows } = await crud.getDataListFromTable('USER_NO', 'USER_TB', { USER_EMAIL: userInfo.UserEmail, USER_PHONE: userInfo.UserPhone })
     if (status === -1 || userRows.length === 0) {
       res.status(500).send({ status: "error", error: "Failed to get user  infomation at getUserNo" });
+      res.end();
       return false;
     }
     return userRows[0].USER_NO;

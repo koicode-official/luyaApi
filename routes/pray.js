@@ -38,7 +38,6 @@ router.get("/list", async (req, res) => {
   const userNo = await getUserNo(req, res);
   const completed = req.query.done === "true" ? 1 : 0;
   let whereParse = { "USER_NO": userNo, "DELETED_AT": null };
-
   if (req.query.done != null) {
     whereParse = {
       ...whereParse,
@@ -92,6 +91,7 @@ router.post("/done", async (req, res) => {
 router.post("/add", async (req, res) => {
   const text = req.body.text;
   const userNo = await getUserNo(req, res);
+
   const prayObj = {
     USER_NO: userNo,
     PRAY_TEXT: text,

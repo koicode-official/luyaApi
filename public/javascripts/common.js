@@ -8,6 +8,10 @@ const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES;
 const REFRESH_TOKEN_EXPIRES = process.env.REFRESH_TOKEN_EXPIRES;
 
 
+const algorithm = 'aes-256-cbc';
+const key = Buffer.from(process.env.ENCRYPTION_KEY, 'hex'); // 환경 변수에서 키 읽기
+const iv = Buffer.from(process.env.ENCRYPTION_IV, 'hex'); // 환경 변수에서 IV 읽기
+
 const common = {
   findObjectById: (obj, id) => {
     return obj.find(item => item.id === id);
@@ -106,7 +110,23 @@ const common = {
       // domain: "." + req.get('origin'),
       // secure: false, //https 사용시 true
     });
+  },
+  encrypt: (text) => {
+    let cipher = crypto.createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(text.toString(), 'utf8');
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+  },
+  decrypt: (text) => {
+    let textParts = text.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv(algorithm, key, iv); // 동일한 key, iv 사용
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
   }
+
 }
 
 module.exports = common

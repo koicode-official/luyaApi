@@ -1,9 +1,22 @@
 
 const express = require('express');
+const crypto = require('crypto');
 const common = require('../public/javascripts/common');
-const crud = require("../model/crud")
+const crud = require("../model/crud");
 var router = express.Router();
+const { getUserNo } = require('../model/user.js');
 
+
+router.get("/info", async (req, res) => {
+  const userNo = await getUserNo(req, res);
+  const encryptedUserId = common.encrypt(userNo.toString());
+  const { status, rows } = await crud.getDataListFromTable('USER_NAME', 'USER_TB', { USER_NO: userNo })
+  if (status !== -1) {
+    res.status(200).send({ status: "success", userName: rows[0].USER_NAME, userToken: encryptedUserId });
+  } else {
+    res.status(500).send({ status: "error", error: "Failed to search user information" });
+  }
+})
 
 
 router.post("/create", async function (req, res) {
@@ -36,18 +49,6 @@ router.post("/create", async function (req, res) {
 
 
 
-router.get("/checkId", async function (req, res) {
-  const { status, rows } = await crud.getDataListFromTable('USER_EMAIL', 'USER_TB', { USER_EMAIL: req.query.email })
-  if (status !== -1) {
-    if (rows.length === 0) {
-      res.status(200).send({ status: "Not exist" });
-    } else {
-      res.status(200).send({ status: "exist", data: rows });
-    }
-  } else {
-    res.status(500).send({ status: "error", error: "Failed to search user information" });
-  }
-});
 
 
 module.exports = router;
