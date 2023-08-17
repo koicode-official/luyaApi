@@ -1,7 +1,6 @@
 const express = require('express');
 const common = require("../public/javascripts/common.js")
 const crud = require("../model/crud.js");
-const { getUserNo } = require('../model/user.js');
 var router = express.Router();
 require("dotenv").config();
 

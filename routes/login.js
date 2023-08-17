@@ -139,6 +139,9 @@ router.post("/kakaologin", async (req, res) => {
 
 router.post("/simplesignup", auth, async (req, res) => {
   const userNo = await getUserNo(req, res);
+  if (userNo === null) {
+    return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /login/simplesignup" }); // 여기서 오류 응답 처리
+  }
   const { funnel, recommendCode } = req.body
 
   //마일리지 등록

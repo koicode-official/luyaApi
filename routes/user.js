@@ -9,6 +9,9 @@ const { getUserNo } = require('../model/user.js');
 
 router.get("/info", async (req, res) => {
   const userNo = await getUserNo(req, res);
+  if (userNo === null) {
+    return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo" }); // 여기서 오류 응답 처리
+  }
   const encryptedUserId = common.encrypt(userNo.toString());
   const { status, rows } = await crud.getDataListFromTable('USER_NAME', 'USER_TB', { USER_NO: userNo })
   if (status !== -1) {

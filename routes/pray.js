@@ -36,6 +36,9 @@ router.get("/info", async (req, res) => {
 
 router.get("/list", async (req, res) => {
   const userNo = await getUserNo(req, res);
+    if (userNo === null) {
+      return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /pray/list" }); // 여기서 오류 응답 처리
+    }
   const completed = req.query.done === "true" ? 1 : 0;
   let whereParse = { "USER_NO": userNo, "DELETED_AT": null };
   if (req.query.done != null) {
@@ -92,7 +95,9 @@ router.post("/done", async (req, res) => {
 router.post("/add", async (req, res) => {
   const text = req.body.text;
   const userNo = await getUserNo(req, res);
-
+  if (userNo === null) {
+    return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /pray/add" }); // 여기서 오류 응답 처리
+  }
   const prayObj = {
     USER_NO: userNo,
     PRAY_TEXT: text,
