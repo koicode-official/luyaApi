@@ -64,11 +64,17 @@ router.get("/list", async (req, res) => {
 router.post('/save', async (req, res) => {
   const adviceInfo = req.body;
   const userNo = await getUserNo(req, res);
+  const creatInfo ={ 
+    "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), 
+    "QUESTION": adviceInfo.question,
+    "USER_NO": userNo, 
+    "QUESTION_TYPE": "save" 
+  }
   if (userNo === null) {
     return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /advice/share" });
   }
   try {
-    const { status } = await crud.createDataRow("AI_ADVICE_TB", { "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), "QUESTION": adviceInfo.question, "USER_NO": userNo })
+    const { status } = await crud.createDataRow("AI_ADVICE_TB", creatInfo)
     if (status === -1) {
       res.status(500).json({ message: 'error', error: "Fail to add information from PRAY_LIST_TB at /advice/save" });
     } else {
@@ -84,19 +90,26 @@ router.post('/save', async (req, res) => {
 router.post('/share', async (req, res) => {
   const adviceInfo = req.body;
   const userNo = await getUserNo(req, res);
+  const creatInfo ={ 
+    "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), 
+    "QUESTION": adviceInfo.question,
+    "USER_NO": userNo, 
+    "QUESTION_TYPE": "share" 
+  }
+
   if (userNo === null) {
     return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /advice/share" });
   }
   try {
-    const { status, rows } = await crud.createDataRow("AI_ADVICE_TB", { "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), "QUESTION": adviceInfo.question, "USER_NO": userNo, "QUESTION_TYPE": "share" })
+    const { status, rows } = await crud.createDataRow("AI_ADVICE_TB", creatInfo)
     if (status === -1) {
-      res.status(500).json({ message: 'error', error: "Fail to add information from AI_ADVICE_TB at /advice/save" });
+      res.status(500).json({ message: 'error', error: "Fail to add information from AI_ADVICE_TB at /advice/share" });
     } else {
       const encryptedShareId = common.encrypt(rows.insertId.toString());
       res.status(200).json({ message: 'success', shareId: encryptedShareId });
     }
   } catch (error) {
-    console.error('Error Occured at "/advice/save" - ', error);
+    console.error('Error Occured at "/advice/share" - ', error);
     res.status(500).json({ message: 'error' });
   }
 });
