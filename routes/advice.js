@@ -18,7 +18,7 @@ require("dotenv").config();
 router.get("/info", async (req, res) => {
   const adviceNo = parseInt(req.query.adviceNo);
   try {
-    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "ADVICE_NO": adviceNo })
+    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "ADVICE_NO": adviceNo , "DELETED_AT": null , "QUESTION_TYPE": "save" })
     if (status === -1) {
       console.error('Error Occured at "/advice/info" - ', error);
       res.status(500).json({ message: 'error', error: "Fail to get information from PRAY_LIST_TB at /advice/info" });
@@ -43,7 +43,7 @@ router.get("/list", async (req, res) => {
     return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo at /advice/list" }); // 여기서 오류 응답 처리
   }
   try {
-    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "USER_NO": userNo, "DELETED_AT": null })
+    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "USER_NO": userNo, "DELETED_AT": null , "QUESTION_TYPE": "save"})
     if (status === -1) {
       console.error('Error Occured at "/pray/list" - ', error);
       return res.status(500).json({ message: 'error', error: "Fail to get list of information from AI_ADVICE_TB at /advice/list" });
