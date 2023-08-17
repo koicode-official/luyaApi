@@ -65,7 +65,7 @@ router.post('/save', async (req, res) => {
   const adviceInfo = req.body;
   const userNo = await getUserNo(req, res);
   const creatInfo ={ 
-    "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), 
+    "ADVICE_TXT": adviceInfo.advice, 
     "QUESTION": adviceInfo.question,
     "USER_NO": userNo, 
     "QUESTION_TYPE": "save" 
@@ -91,7 +91,7 @@ router.post('/share', async (req, res) => {
   const adviceInfo = req.body;
   const userNo = await getUserNo(req, res);
   const creatInfo ={ 
-    "ADVICE_TXT": adviceInfo.advice.replace(/"/g, '\''), 
+    "ADVICE_TXT": adviceInfo.advice,
     "QUESTION": adviceInfo.question,
     "USER_NO": userNo, 
     "QUESTION_TYPE": "share" 

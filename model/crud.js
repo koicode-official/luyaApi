@@ -126,18 +126,37 @@ const crud = {
      * @param {object} obj  - { ... , 필드명 : 필드값 }
      * @returns {object}
      */
+
     createDataRow: async (tableName, obj) => {
-        const insertData = InsertParsing(obj);
-        const query = `INSERT INTO ${tableName}(${insertData.fieldList}) VALUES ("${insertData.valueList}")`;
-        console.log('insert query', query)
+        const keys = Object.keys(obj);
+        const values = Object.values(obj);
+        const placeholders = keys.map(() => '?').join(',');
+      
+        const query = `INSERT INTO ${tableName} (${keys.join(',')}) VALUES (${placeholders})`;
+        console.log('insert query', query, values);
+      
         try {
-            const [rows] = await db.query(query, insertData.valueList);
-            return { status: 1, rows: rows }
+          const [rows] = await db.query(query, values);
+          return { status: 1, rows: rows }
         } catch (error) {
-            console.error(`Error Occured from createDataRow() function : \r`, error.sqlMessage)
-            return { status: -1, error: error.sqlMessage }
+          console.error(`Error Occured from createDataRow() function : \r`, error.sqlMessage);
+          return { status: -1, error: error.sqlMessage };
         }
-    },
+      },
+
+    //   구버전
+    // createDataRow: async (tableName, obj) => {
+    //     const insertData = InsertParsing(obj);
+    //     const query = `INSERT INTO ${tableName}(${insertData.fieldList}) VALUES ("${insertData.valueList}")`;
+    //     console.log('insert query', query)
+    //     try {
+    //         const [rows] = await db.query(query, insertData.valueList);
+    //         return { status: 1, rows: rows }
+    //     } catch (error) {
+    //         console.error(`Error Occured from createDataRow() function : \r`, error.sqlMessage)
+    //         return { status: -1, error: error.sqlMessage }
+    //     }
+    // },
 
 
     /**
@@ -146,18 +165,35 @@ const crud = {
      * @param {object} obj 
      * @returns 
      */
+
     createDataRowBulk: async (tableName, obj) => {
-        const valueList = InsertBulkParsing(obj);
-        const fieldList = Object.keys(obj[0]);
-        const query = `INSERT INTO ${tableName}(${fieldList}) VALUES ?`;
+        const fieldList = Object.keys(obj[0]).join(',');
+        const placeholders = obj.map(row => '(' + Object.values(row).fill('?').join(',') + ')').join(',');
+        const values = obj.reduce((acc, row) => acc.concat(Object.values(row)), []);
+      
+        const query = `INSERT INTO ${tableName}(${fieldList}) VALUES ${placeholders}`;
         try {
-            const [rows] = await db.query(query, [valueList], true);
-            return { status: 1, rows: rows }
+          const [rows] = await db.query(query, values, true);
+          return { status: 1, rows: rows }
         } catch (error) {
-            console.error(`Error Occured from createDataRowBulk() function : \r`, error.sqlMessage)
-            return { status: -1, error: error.sqlMessage }
+          console.error(`Error Occured from createDataRowBulk() function : \r`, error.sqlMessage);
+          return { status: -1, error: error.sqlMessage };
         }
-    },
+      },
+
+    // 구버전
+    // createDataRowBulk: async (tableName, obj) => {
+    //     const valueList = InsertBulkParsing(obj);
+    //     const fieldList = Object.keys(obj[0]);
+    //     const query = `INSERT INTO ${tableName}(${fieldList}) VALUES ?`;
+    //     try {
+    //         const [rows] = await db.query(query, [valueList], true);
+    //         return { status: 1, rows: rows }
+    //     } catch (error) {
+    //         console.error(`Error Occured from createDataRowBulk() function : \r`, error.sqlMessage)
+    //         return { status: -1, error: error.sqlMessage }
+    //     }
+    // },
 
     /**
      * 데이터 업데이트 - updateData()
