@@ -18,13 +18,13 @@ router.get('/', function (req, res, next) {
 //no auth
 router.use("/chat", chatRouter);
 router.use("/today", todayRouter);
-router.use("/advice", adviceRotuer);
 router.use("/login", loginRouter);
 router.use("/authPhone", authPhoneRouter);
 router.use("/share", shareRouter);
 
 
 //auth
+router.use("/advice", auth ,adviceRotuer);
 router.use("/user", auth,userRouter);
 router.use("/pray", auth, prayRouter);
 
