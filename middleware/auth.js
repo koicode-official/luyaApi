@@ -81,7 +81,8 @@ const authorizationJwt = (req, res, next) => {
         expires: accessTokenExpires,
       });
       console.log(" access token 재발급 ");
-      req.accessToken = accessToken;
+      // req.accessToken = accessToken;
+      req.accessToken = newAccessToken;
       next();
     } else if (
       refreshTokenVerification.ok === false &&
