@@ -7,7 +7,6 @@ var cors = require("cors");
 var indexRouter = require('./routes/index');
 var app = express();
 
-var allowedOrigins = ["http://localhost:3000", "https://luya.co.kr", "https://www.luya.co.kr"];
 
 
 
@@ -20,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+var allowedOrigins = ["http://localhost:3000", "https://luya.co.kr", "https://www.luya.co.kr"];
 
 
 //cors

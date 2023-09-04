@@ -8,6 +8,7 @@ var axios = require("axios");
 const { getUserNo } = require("../model/user.js");
 require("dotenv").config();
 var auth = require("../middleware/auth.js")
+var appleSignIn = require("apple-signin-auth");
 
 const KAKAO_RESTAPI_KEY = process.env.KAKAO_RESTAPI_KEY;
 
@@ -86,6 +87,24 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 })
 
+
+
+
+router.post("/applelogin", async(req,res)=>{
+  try {
+    const { code } = req.body;
+    const response = await appleSignIn.verifyIdToken({
+      idToken: code,
+      audience: 'kr.co.luya.signup'
+    });
+    // response에는 사용자 정보가 포함됩니다.
+    // 이제 이를 사용하여 데이터베이스에 사용자를 저장하거나 토큰을 생성할 수 있습니다.
+
+    res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    res.status(400).json({ success: false, error: error.message });
+  }
+})
 
 
 router.post("/kakaologin", async (req, res) => {
