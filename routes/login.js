@@ -95,7 +95,8 @@ router.post("/applelogin", async (req, res) => {
   try {
     const { auth } = req.body;
     console.log('code', auth)
-    console.log('jsw', jwt.decode(auth.id_token))
+    console.log('jsw', jwt.decode(auth.id_token));
+    console.log('jsw', jwt.decode(auth.code));
     const response = await appleSignIn.verifyIdToken({
       idToken: code,
       audience: 'kr.co.luya.signup'
