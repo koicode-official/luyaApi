@@ -96,9 +96,8 @@ router.post("/applelogin", async (req, res) => {
     const { auth } = req.body;
     console.log('code', auth)
     console.log('jsw', jwt.decode(auth.id_token));
-    console.log('jsw', jwt.decode(auth.code));
     const response = await appleSignIn.verifyIdToken({
-      idToken: code,
+      idToken: auth.id_token,
       audience: 'kr.co.luya.signup'
     });
     // response에는 사용자 정보가 포함됩니다.
