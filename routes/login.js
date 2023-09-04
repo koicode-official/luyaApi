@@ -93,6 +93,7 @@ router.post("/kakaologinvalidation", async (req, res) => {
 router.post("/applelogin", async(req,res)=>{
   try {
     const { code } = req.body;
+    console.log('code', code)
     const response = await appleSignIn.verifyIdToken({
       idToken: code,
       audience: 'kr.co.luya.signup'
