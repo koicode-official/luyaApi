@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var jwt = require("jsonwebtoken")
 var jwToken = require("../public/javascripts/jwt.js");
 var crud = require("../model/crud.js")
 var common = require("../public/javascripts/common.js")
@@ -90,10 +91,11 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 
 
-router.post("/applelogin", async(req,res)=>{
+router.post("/applelogin", async (req, res) => {
   try {
-    const { code } = req.body;
-    console.log('code', code)
+    const { auth } = req.body;
+    console.log('code', auth)
+    console.log('jsw', jwt.decode(auth.id_token))
     const response = await appleSignIn.verifyIdToken({
       idToken: code,
       audience: 'kr.co.luya.signup'
@@ -117,7 +119,7 @@ router.post("/kakaologin", async (req, res) => {
   const userGender = kakaoAccount.has_gender === true ? kakaoAccount.gender : null
   const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
   // const birthDay = `${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
-  
+
   const signupInfo = {
     USER_TYPE: `kakao_${userKakaoId}`,
     USER_NAME: kakaoAccount.name,
