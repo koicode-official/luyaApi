@@ -91,9 +91,9 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 
 
-router.post("/applelogin", async (req, res) => {
+router.get("/applelogin", async (req, res) => {
   try {
-    const { auth } = req.body;
+    const { auth } = req.query;
     console.log('code', auth)
     console.log('jsw', jwt.decode(auth.id_token));
     const response = await appleSignIn.verifyIdToken({
