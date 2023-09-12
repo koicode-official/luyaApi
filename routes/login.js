@@ -93,15 +93,15 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 router.get("/applelogin", async (req, res) => {
   try {
-    const { auth } = req.query;
-    console.log('code', auth)
-    console.log('jsw', jwt.decode(auth.id_token));
+    const { id_token } = req.query;
+    console.log('jsw', jwt.decode(id_token));
     const response = await appleSignIn.verifyIdToken({
       idToken: auth.id_token,
       audience: 'kr.co.luya.signup'
     });
     // response에는 사용자 정보가 포함됩니다.
     // 이제 이를 사용하여 데이터베이스에 사용자를 저장하거나 토큰을 생성할 수 있습니다.
+    console.log('response apple', response)
     
     const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
     if (userStatus === -1) {
