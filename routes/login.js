@@ -102,8 +102,16 @@ router.get("/applelogin", async (req, res) => {
     });
     // response에는 사용자 정보가 포함됩니다.
     // 이제 이를 사용하여 데이터베이스에 사용자를 저장하거나 토큰을 생성할 수 있습니다.
-
-    res.status(200).json({ success: true, data: response });
+    
+    const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
+    if (userStatus === -1) {
+      res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
+    }
+    common.setJwtTokens(req, res, userEmail, userPhone);
+    res.status(200).send({
+      status: "success",
+      data: response,
+    });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }
