@@ -106,11 +106,16 @@ router.get("/applelogin", async (req, res) => {
       if (userStatus === -1) {
         res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
       }
+      console.log('userRows', userRows)
       if (userRows.length === 0) {
         common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
         res.status(200).send({
           status: "success",
           data: response,
+        });
+      } else {
+        res.status(200).send({
+          status: "not exist",
         });
       }
     }
