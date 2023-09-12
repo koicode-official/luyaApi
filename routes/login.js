@@ -94,24 +94,26 @@ router.post("/kakaologinvalidation", async (req, res) => {
 router.get("/applelogin", async (req, res) => {
   try {
     const { id_token } = req.query;
-    console.log('jsw', jwt.decode(id_token));
-    const response = await appleSignIn.verifyIdToken({
-      idToken: auth.id_token,
-      audience: 'kr.co.luya.signup'
-    });
-    // response에는 사용자 정보가 포함됩니다.
-    // 이제 이를 사용하여 데이터베이스에 사용자를 저장하거나 토큰을 생성할 수 있습니다.
-    console.log('response apple', response)
-    
-    const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
-    if (userStatus === -1) {
-      res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
+    const jwtInfo = jwt.decode(id_token);
+    const userEmail = jwtInfo.email;
+    if (!userEmail) {
+      res.status(200).send({ status: "email not exist", error: "Failed to get User infomation at /login/applelogin" });
+
+    } else {
+      console.log('jsw', jwt.decode(id_token));
+
+      const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
+      if (userStatus === -1) {
+        res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
+      }
+      if (userRows.length === 0) {
+        common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
+        res.status(200).send({
+          status: "success",
+          data: response,
+        });
+      }
     }
-    common.setJwtTokens(req, res, userEmail, userPhone);
-    res.status(200).send({
-      status: "success",
-      data: response,
-    });
   } catch (error) {
     res.status(400).json({ success: false, error: error.message });
   }
