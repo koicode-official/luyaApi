@@ -111,7 +111,6 @@ router.get("/applelogin", async (req, res) => {
         common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
         res.status(200).send({
           status: "success",
-          data: response,
         });
       } else {
         res.status(200).send({
