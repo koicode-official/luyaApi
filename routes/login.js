@@ -100,13 +100,10 @@ router.get("/applelogin", async (req, res) => {
       res.status(200).send({ status: "email not exist", error: "Failed to get User infomation at /login/applelogin" });
 
     } else {
-      console.log('jsw', jwt.decode(id_token));
-
       const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
       if (userStatus === -1) {
         res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
       }
-      console.log('userRows', userRows)
       if (userRows.length !== 0) {
         common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
         res.status(200).send({
@@ -131,7 +128,7 @@ router.post("/kakaologin", async (req, res) => {
   const userEmail = kakaoAccount.email;
   const userPhone = kakaoAccount.has_phone_number === true ? "0" + kakaoAccount.phone_number.split(" ")[1].replace(/[^0-9]/g, "") : null;
   const userGender = kakaoAccount.has_gender === true ? kakaoAccount.gender : null
-  const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
+  // const birthDay = `${kakaoAccount.birthyear}-${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
   // const birthDay = `${kakaoAccount.birthday[0]}${kakaoAccount.birthday[1]}-${kakaoAccount.birthday[2]}${kakaoAccount.birthday[3]}`
 
   const signupInfo = {
@@ -140,7 +137,7 @@ router.post("/kakaologin", async (req, res) => {
     USER_PHONE: userPhone,
     USER_EMAIL: userEmail,
     USER_GENDER: userGender,
-    USER_BIRTH_DT: common.jsDateToMysqlDateTime(birthDay),
+    // USER_BIRTH_DT: common.jsDateToMysqlDateTime(birthDay),
   }
 
   const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
@@ -153,6 +150,7 @@ router.post("/kakaologin", async (req, res) => {
     signupInfo["USER_PASSWORD"] = password
     signupInfo["USER_SALT_KEY"] = salt
 
+    console.log('signupInfo', signupInfo);
     const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
 
     if (status !== -1) {

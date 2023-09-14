@@ -26,12 +26,12 @@ router.post("/create", async function (req, res) {
   console.log('inputInfo', inputInfo)
 
   const userInfo = {
-    USER_NAME: inputInfo.name.value,
+    // USER_NAME: inputInfo.name.value,
     USER_PHONE: inputInfo.phoneNumber.value,
     USER_PASSWORD: inputInfo.password.value,
     USER_EMAIL: inputInfo.email.value,
     USER_GENDER: inputInfo.gender.value,
-    USER_BIRTH_DT: inputInfo.birthday.value,
+    // USER_BIRTH_DT: inputInfo.birthday.value,
   }
 
 

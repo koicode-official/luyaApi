@@ -23,7 +23,7 @@ router.get("/list", async (req, res) => {
       res.status(500).json({ message: 'error', error: "Fail to get list of information from PRAY_LIST_TB at /share/list" });
     }
 
-    const { status: userInfoStatus, rows: userInfoRows } = await crud.getDataListFromTable("USER_NAME", "USER_TB", { USER_NO: userNo });
+    const { status: userInfoStatus, rows: userInfoRows } = await crud.getDataListFromTable("USER_EMAIL", "USER_TB", { USER_NO: userNo });
     if (userInfoStatus === -1) {
       console.error('Error Occured at "/share/list" - ', error);
       res.status(500).json({ message: 'error', error: "Fail to get user information from PRAY_LIST_TB at /share/list" });
