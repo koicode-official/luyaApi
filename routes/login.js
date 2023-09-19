@@ -131,7 +131,7 @@ router.get("/applelogin", async (req, res) => {
       const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
 
       if (status !== -1) {
-        common.setJwtTokens(req, res, userEmail, userPhone);
+        common.setJwtTokens(req, res, userEmail, "-");
         res.status(200).send({ status: "success", message: "new user" });
       } else {
         res.status(200).send({ status: "error", error: "Failed to create user information" });
