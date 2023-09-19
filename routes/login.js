@@ -103,11 +103,11 @@ router.get("/applelogin", async (req, res) => {
     const userName = userInfo ? userInfo.name.lastName + userInfo.name.firstName : "";
 
     if (!userInfo) {
-      const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
+      const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail });
       if (userStatus === -1) {
         res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
       }
-      if (userRows.length !== 0) {
+      if (userRows[0].WITHDRAWAL_DT !== null) {
         common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
         res.status(200).send({
           status: "success",
