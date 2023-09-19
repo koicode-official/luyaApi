@@ -81,6 +81,8 @@ const updateParsing = (obj) => {
     for (const [key, value] of Object.entries(obj)) {
         if (typeof value === "number") {
             valueList.push(`${key} = ${value}`)
+        }else if (value === null) {
+            valueList.push(` AND ${key} IS NULL`)
         } else {
             valueList.push(`${key} = '${value}'`)
         }
