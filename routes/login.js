@@ -162,13 +162,8 @@ router.get("/applelogin", async (req, res) => {
         USER_PHONE: "-",
         USER_EMAIL: userEmail,
         USER_GENDER: "other",
+        USER_CODE : code
       }
-
-      const { password, salt } = await common.createHashedPassword(code);
-      signupInfo["USER_PASSWORD"] = password
-      signupInfo["USER_SALT_KEY"] = salt
-
-      console.log('signupInfo', signupInfo);
       const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
 
       if (status !== -1) {
