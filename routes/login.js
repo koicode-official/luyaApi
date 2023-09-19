@@ -115,6 +115,7 @@ router.get("/applelogin", async (req, res) => {
       } else {
         const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": null }, { USER_EMAIL: userEmail })
         if (status !== -1) {
+          common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
           res.status(200).send({
             status: "success", message: "returned account"
           });
