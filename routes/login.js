@@ -133,7 +133,7 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 router.get("/applelogin", async (req, res) => {
   try {
-    const { id_token ,code} = req.query.authorization;
+    const { id_token, code } = req.query.authorization;
     const userInfo = req.query.user;
     const userEmail = userInfo ? userInfo.email : jwt.decode(id_token).email;
     const userName = userInfo ? userInfo.name.lastName + userInfo.name.firstName : "";
@@ -162,15 +162,19 @@ router.get("/applelogin", async (req, res) => {
         USER_PHONE: "-",
         USER_EMAIL: userEmail,
         USER_GENDER: "other",
-        USER_CODE : code
+        USER_CODE: code
       }
-      const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
+      try {
+        const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
 
-      if (status !== -1) {
-        common.setJwtTokens(req, res, userEmail, "-");
-        res.status(200).send({ status: "success", message: "new user" });
-      } else {
-        res.status(200).send({ status: "error", error: "Failed to create user information" });
+        if (status !== -1) {
+          common.setJwtTokens(req, res, userEmail, "-");
+          res.status(200).send({ status: "success", message: "new user" });
+        } else {
+          res.status(200).send({ status: "error", error: "Failed to create user information" });
+        }
+      } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
       }
     }
   } catch (error) {
