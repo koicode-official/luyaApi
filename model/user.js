@@ -8,7 +8,7 @@ const crypto = require('crypto')
 const user = {
   getUserNo: async (req, res) => {
     const userInfo = common.getUserInfoFromCookie(req.accessToken);
-    const { status, rows: userRows } = await crud.getDataListFromTable('USER_NO', 'USER_TB', { USER_EMAIL: userInfo.UserEmail, USER_PHONE: userInfo.UserPhone })
+    const { status, rows: userRows } = await crud.getDataListFromTable('USER_NO', 'USER_TB', { USER_EMAIL: userInfo.UserEmail, USER_PHONE: userInfo.UserPhone, WITHDRAWAL_DT: null })
     if (status === -1 || userRows.length === 0) {
     
       return null;

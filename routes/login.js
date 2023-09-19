@@ -61,46 +61,10 @@ router.get("/logout", async (req, res) => {
       expires: new Date(),
     });
 
-    // 현재 날짜를 가져옵니다.
-    var currentDate = new Date();
-
-    // 현재 날짜에 10일을 더합니다.
-    currentDate.setDate(currentDate.getDate() + 10);
-
-    const clientSecret = jwt.sign(
-      {
-        "alg": "ES256",
-        "kid": "AR2R86F642"
-      },
-      {
-        "iss": "gyuin jeong",
-        "iat": currentDate,
-        "exp": currentDate.setDate(currentDate.getDate() + 10),
-        "aud": "https://appleid.apple.com",
-        "sub": "kr.co.luya"
-      }
-    )
-    console.log('clientSecret', clientSecret);
-
-    // await axios({
-    //   url: "https://appleid.apple.com/auth/token",
-    //   method: "POST",
-    //   headers: {
-    //     'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-    //   },
-    //   data: {
-    //     grant_type: "authorization_code",
-    //     client_id: KAKAO_RESTAPI_KEY,
-    //     redirect_uri: `http://localhost:3000/login/kakaologin`,
-    //     code: code
-    //   }
-    // }).then(response => {
-    //   res.status(200).send({ status: "success", data: response.data })
-    // })
-
     res.status(200).send({ status: "success", error: "logout" });
 
   } catch (error) {
+    console.log('error', error);
     res.status(200).send({ status: "fail", error: error });
 
   }
@@ -133,7 +97,7 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 router.get("/applelogin", async (req, res) => {
   try {
-    const { id_token ,code} = req.query.authorization;
+    const { id_token, code } = req.query.authorization;
     const userInfo = req.query.user;
     const userEmail = userInfo ? userInfo.email : jwt.decode(id_token).email;
     const userName = userInfo ? userInfo.name.lastName + userInfo.name.firstName : "";
@@ -162,9 +126,9 @@ router.get("/applelogin", async (req, res) => {
         USER_PHONE: "-",
         USER_EMAIL: userEmail,
         USER_GENDER: "other",
-        USER_CODE:code
+        USER_CODE: code
       }
-      
+
       const { password, salt } = await common.createHashedPassword(code);
       signupInfo["USER_PASSWORD"] = password
       signupInfo["USER_SALT_KEY"] = salt

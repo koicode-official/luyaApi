@@ -27,9 +27,9 @@ router.get("/delete", async (req, res) => {
   if (userNo === null) {
     return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo" }); // 여기서 오류 응답 처리
   }
-  const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": common.jsDateToMysqlDateTime(new Date()) }, { USER_NO: userNo })
+  const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": common.jsDateToMysqlDateTime(new Date()) },  { USER_NO: userNo })
   if (status !== -1) {
-    res.cookie("_actk", "", {
+       res.cookie("_actk", "", {
       path: "/",
       httpOnly: true,
       expires: new Date(),
