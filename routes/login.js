@@ -102,8 +102,6 @@ router.get("/applelogin", async (req, res) => {
     const userEmail = userInfo ? userInfo.email : jwt.decode(id_token).email;
     const userName = userInfo ? userInfo.name.lastName + userInfo.name.firstName : "";
 
-
-
     if (!userInfo) {
       const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
       if (userStatus === -1) {
@@ -115,9 +113,12 @@ router.get("/applelogin", async (req, res) => {
           status: "success",
         });
       } else {
-        res.status(200).send({
-          status: "not exist",
-        });
+        const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": null }, { USER_NO: userEmail })
+        if (status !== -1) {
+          res.status(200).send({
+            status: "success",
+          });
+        }
       }
     } else {
       const signupInfo = {
