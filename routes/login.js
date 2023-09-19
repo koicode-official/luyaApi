@@ -113,7 +113,7 @@ router.get("/applelogin", async (req, res) => {
           status: "success",
         });
       } else {
-        const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": null }, { USER_EMAIL: userRows[0].USER_EMAIL })
+        const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": null }, { USER_NO: userRows[0].USER_NO })
         if (status !== -1) {
           common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
           res.status(200).send({
