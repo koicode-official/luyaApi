@@ -82,7 +82,7 @@ const updateParsing = (obj) => {
         if (typeof value === "number") {
             valueList.push(`${key} = ${value}`)
         }else if (value === null) {
-            valueList.push(` AND ${key} IS NULL`)
+            valueList.push(`${key} IS NULL`)
         } else {
             valueList.push(`${key} = '${value}'`)
         }
