@@ -93,13 +93,14 @@ router.post("/kakaologinvalidation", async (req, res) => {
 
 router.get("/applelogin", async (req, res) => {
   try {
-    const { id_token } = req.query;
-    const jwtInfo = jwt.decode(id_token);
-    const userEmail = jwtInfo.email;
-    if (!userEmail) {
-      res.status(200).send({ status: "email not exist", error: "Failed to get User infomation at /login/applelogin" });
+    const { id_token } = req.query.authorization;
+    const userInfo = req.query.user;
+    const userEmail = userInfo ? userInfo.email : jwt.decode(id_token).email;
+    const userName = userInfo ? userInfo.user.name : "";
 
-    } else {
+
+
+    if (!userInfo) {
       const { status: userStatus, rows: userRows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: userEmail, WITHDRAWAL_DT: null });
       if (userStatus === -1) {
         res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
@@ -113,6 +114,27 @@ router.get("/applelogin", async (req, res) => {
         res.status(200).send({
           status: "not exist",
         });
+      }
+    } else {
+      const signupInfo = {
+        USER_TYPE: "apple",
+        USER_NAME: userName,
+        USER_PHONE: "-",
+        USER_EMAIL: userEmail,
+        USER_GENDER: "other",
+      }
+      const { password, salt } = await common.createHashedPassword(userEmail + new Date());
+      signupInfo["USER_PASSWORD"] = password
+      signupInfo["USER_SALT_KEY"] = salt
+
+      console.log('signupInfo', signupInfo);
+      const { status, rows: createdUserRows } = await crud.createDataRow('USER_TB', signupInfo);
+
+      if (status !== -1) {
+        common.setJwtTokens(req, res, userEmail, userPhone);
+        res.status(200).send({ status: "success", message: "new user" });
+      } else {
+        res.status(200).send({ status: "error", error: "Failed to create user information" });
       }
     }
   } catch (error) {
