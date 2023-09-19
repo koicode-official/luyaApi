@@ -107,7 +107,8 @@ router.get("/applelogin", async (req, res) => {
       if (userStatus === -1) {
         res.status(500).send({ status: "error", error: "Failed to get User infomation at /login/applelogin" });
       }
-      if (userRows[0].WITHDRAWAL_DT !== null) {
+
+      if (userRows[0].WITHDRAWAL_DT === null) {
         common.setJwtTokens(req, res, userRows[0].USER_EMAIL, userRows[0].USER_PHONE);
         res.status(200).send({
           status: "success",
