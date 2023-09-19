@@ -96,7 +96,7 @@ router.get("/applelogin", async (req, res) => {
     const { id_token } = req.query.authorization;
     const userInfo = req.query.user;
     const userEmail = userInfo ? userInfo.email : jwt.decode(id_token).email;
-    const userName = userInfo ? userInfo.user.name : "";
+    const userName = userInfo ? userInfo.name.lastName +userInfo.name.firstName : "";
 
 
 
