@@ -81,7 +81,7 @@ const updateParsing = (obj) => {
     for (const [key, value] of Object.entries(obj)) {
         if (typeof value === "number") {
             valueList.push(`${key} = ${value}`)
-        }else if (value === null) {
+        } else if (value === null) {
             valueList.push(`${key} = NULL`)
         } else {
             valueList.push(`${key} = '${value}'`)
@@ -100,27 +100,51 @@ const crud = {
      * @param {obejct} wherePhrase - { ... , 필드명 : 조건값 }( 날짜는 new Date(date)로 할당 )
      * @returns {object}
      */
-    getDataListFromTable: async (fields, tableName, wherePhrase, orderby, groupby) => {
+    getDataListFromTable: async (fields, tableName, wherePhrase, options = {}) => {
+        const { orderby, groupby, limit, offset } = options;
         const fieldsList = fields.length === 0 ? '*' : typeof fields === "string" ? fields : fields.join(',');
-        const query =
-            `SELECT 
+        const query = `
+            SELECT 
                 ${fieldsList}
             FROM 
                 ${tableName} tb
                 ${wherePhrase ? whereParsing(wherePhrase) : ''}
                 ${orderby ? 'ORDER BY ' + orderby : ''}
                 ${groupby ? 'GROUP BY ' + groupby : ''}
-            `
-            ;
-        console.log( query)
+                ${limit ? 'LIMIT ' + limit : ''}
+                ${offset ? 'OFFSET ' + offset : ''}
+        `;
+        console.log(query);
         try {
             const [rows] = await db.query(query);
-            return { status: 1, rows: rows }
+            return { status: 1, rows: rows };
         } catch (error) {
-            console.error(`Error Occured from getDataListFromTable() function : \r`, error.sqlMessage)
-            return { status: -1, error: error.sqlMessage }
+            console.error(`Error Occurred from getDataListFromTable() function : \r`, error.sqlMessage);
+            return { status: -1, error: error.sqlMessage };
         }
     },
+
+    // getDataListFromTable: async (fields, tableName, wherePhrase, orderby, groupby) => {
+    //     const fieldsList = fields.length === 0 ? '*' : typeof fields === "string" ? fields : fields.join(',');
+    //     const query =
+    //         `SELECT 
+    //             ${fieldsList}
+    //         FROM 
+    //             ${tableName} tb
+    //             ${wherePhrase ? whereParsing(wherePhrase) : ''}
+    //             ${orderby ? 'ORDER BY ' + orderby : ''}
+    //             ${groupby ? 'GROUP BY ' + groupby : ''}
+    //         `
+    //         ;
+    //     console.log( query)
+    //     try {
+    //         const [rows] = await db.query(query);
+    //         return { status: 1, rows: rows }
+    //     } catch (error) {
+    //         console.error(`Error Occured from getDataListFromTable() function : \r`, error.sqlMessage)
+    //         return { status: -1, error: error.sqlMessage }
+    //     }
+    // },
 
     /**
      * 데이터 생성 - createDataRow()
@@ -133,18 +157,18 @@ const crud = {
         const keys = Object.keys(obj);
         const values = Object.values(obj);
         const placeholders = keys.map(() => '?').join(',');
-      
+
         const query = `INSERT INTO ${tableName} (${keys.join(',')}) VALUES (${placeholders})`;
         console.log('insert query', query, values);
-      
+
         try {
-          const [rows] = await db.query(query, values);
-          return { status: 1, rows: rows }
+            const [rows] = await db.query(query, values);
+            return { status: 1, rows: rows }
         } catch (error) {
-          console.error(`Error Occured from createDataRow() function : \r`, error.sqlMessage);
-          return { status: -1, error: error.sqlMessage };
+            console.error(`Error Occured from createDataRow() function : \r`, error.sqlMessage);
+            return { status: -1, error: error.sqlMessage };
         }
-      },
+    },
 
     //   구버전
     // createDataRow: async (tableName, obj) => {
@@ -172,16 +196,16 @@ const crud = {
         const fieldList = Object.keys(obj[0]).join(',');
         const placeholders = obj.map(row => '(' + Object.values(row).fill('?').join(',') + ')').join(',');
         const values = obj.reduce((acc, row) => acc.concat(Object.values(row)), []);
-      
+
         const query = `INSERT INTO ${tableName}(${fieldList}) VALUES ${placeholders}`;
         try {
-          const [rows] = await db.query(query, values, true);
-          return { status: 1, rows: rows }
+            const [rows] = await db.query(query, values, true);
+            return { status: 1, rows: rows }
         } catch (error) {
-          console.error(`Error Occured from createDataRowBulk() function : \r`, error.sqlMessage);
-          return { status: -1, error: error.sqlMessage };
+            console.error(`Error Occured from createDataRowBulk() function : \r`, error.sqlMessage);
+            return { status: -1, error: error.sqlMessage };
         }
-      },
+    },
 
     // 구버전
     // createDataRowBulk: async (tableName, obj) => {

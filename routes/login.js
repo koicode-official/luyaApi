@@ -45,6 +45,37 @@ router.post("/", async (req, res) => {
   }
 
 });
+router.post("/admin", async (req, res) => {
+
+  const loginInfo = common.reqToDatabaseFormat(req.body);
+  const { rows } = await crud.getDataListFromTable('', 'USER_TB', { USER_EMAIL: loginInfo.USER_EMAIL, WITHDRAWAL_DT: null })
+  if (!rows || rows.length === 0) {
+    res.status(200).send({ status: "not found", error: "User information is not found" });
+  } else {
+    //비밀번호 비교
+    crypto.pbkdf2(loginInfo.USER_PASSWORD, rows[0].USER_SALT_KEY, 9999, 64, 'sha512', (err, key) => {
+      if (err) {
+        res.status(500).send({ status: "fail", error: "Failed to salting password" });
+      } else {
+        // common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
+        // res.status(200).send({
+        //   status: "success",
+        // });
+        if (key.toString('base64') === rows[0].USER_PASSWORD && rows[0].USER_TYPE === "admin") {
+          common.setJwtTokens(req, res, rows[0].USER_EMAIL, rows[0].USER_PHONE);
+          res.status(200).send({
+            status: "success",
+          });
+        } else {
+          res.status(200).send({ status: "fail", error: "Wrong password" });
+        }
+
+
+      }
+    });
+  }
+
+});
 
 
 router.get("/logout", async (req, res) => {

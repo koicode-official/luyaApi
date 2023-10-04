@@ -7,6 +7,28 @@ var router = express.Router();
 const { getUserNo } = require('../model/user.js');
 
 
+router.get("/list", async (req, res) => {
+  const { pageNumber, itemsPerPage } = req.query;
+  const offset = (parseInt(pageNumber) - 1) * parseInt(itemsPerPage);
+
+  const { status, rows } = await crud.getDataListFromTable('', 'USER_TB', { WITHDRAWAL_DT: null }, { limit: itemsPerPage, offset: offset })
+  if (status !== -1) {
+    res.status(200).send({ status: "success", userList: rows });
+  } else {
+    res.status(500).send({ status: "error", error: "Failed to search user list information" });
+  }
+});
+
+
+router.get("/totalcountlist", async (req, res) => {
+  const { status, rows } = await crud.getDataListFromTable('', 'USER_TB', { WITHDRAWAL_DT: null })
+  if (status !== -1) {
+    res.status(200).send({ status: "success", totalItems: rows.length });
+  } else {
+    res.status(500).send({ status: "error", error: "Failed to search user list information" });
+  }
+});
+
 router.get("/info", async (req, res) => {
   const userNo = await getUserNo(req, res);
   if (userNo === null) {
@@ -27,9 +49,9 @@ router.get("/delete", async (req, res) => {
   if (userNo === null) {
     return res.status(500).json({ status: "error", error: "Failed to get user information at getUserNo" }); // 여기서 오류 응답 처리
   }
-  const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": common.jsDateToMysqlDateTime(new Date()) },  { USER_NO: userNo })
+  const { status, rows } = await crud.updateData('USER_TB', { "WITHDRAWAL_DT": common.jsDateToMysqlDateTime(new Date()) }, { USER_NO: userNo })
   if (status !== -1) {
-       res.cookie("_actk", "", {
+    res.cookie("_actk", "", {
       path: "/",
       httpOnly: true,
       expires: new Date(),

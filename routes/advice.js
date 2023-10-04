@@ -57,6 +57,47 @@ router.get("/list", async (req, res) => {
   }
 })
 
+/**
+* 고민/질문 리스트
+*/
+
+router.get("/listall", async (req, res) => {
+  const { pageNumber, itemsPerPage } = req.query;
+  const offset = (parseInt(pageNumber) - 1) * parseInt(itemsPerPage);
+  try {
+    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "DELETED_AT": null },{ limit: itemsPerPage, offset: offset })
+    if (status === -1) {
+      console.error('Error Occured at "/pray/listall" - ', error);
+      return res.status(500).json({ message: 'error', error: "Fail to get list of information from AI_ADVICE_TB at /advice/listall" });
+    } else {
+      res.status(200).json({ message: 'success', adviceList: rows });
+    }
+
+  } catch (error) {
+    console.error('Error Occured at "/pray/list" - ', error);
+    res.status(500).json({ message: 'error' });
+  }
+})
+/**
+* 고민/질문 리스트
+*/
+
+router.get("/totalcountadvice", async (req, res) => {
+  try {
+    const { status, rows } = await crud.getDataListFromTable("", "AI_ADVICE_TB", { "DELETED_AT": null })
+    if (status === -1) {
+      console.error('Error Occured at "/pray/totalcountadvice" - ', error);
+      return res.status(500).json({ message: 'error', error: "Fail to get list of information from AI_ADVICE_TB at /advice/totalcountadvice" });
+    } else {
+      res.status(200).json({ message: 'success', totalItems: rows.length });
+    }
+
+  } catch (error) {
+    console.error('Error Occured at "/pray/list" - ', error);
+    res.status(500).json({ message: 'error' });
+  }
+})
+
 
 
 
